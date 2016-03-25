@@ -25,11 +25,6 @@ const { Route } = Ember;
 export default Route.extend(
   CordovaEventsMixin, {
 
-  activate(...args) {
-    this._super(args);
-    console.log('hiya');
-  },
-
   onCordova: {
     pause: 'logPause',
     resume: ['logResume', 'incrementCounter'],
