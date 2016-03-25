@@ -24,8 +24,10 @@ For support with older Ember versions, look at [ember-cli-cordova](https://githu
   ember install ember-cordova
 ```
 
-Installing will init a Cordova project for you at
-ember-cordova/cordova, with your Ember Apps name as the Cordova App name.
+You can optionally pass name & cordovaId params, which will set the id &
+display name of your Cordova application. If none exist, your Ember Apps
+name will be used.
+
 If you already have a Cordova project here it will not be overwritten.
 
 As a final step, add your desired platforms, e.g.:
