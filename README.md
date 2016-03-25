@@ -1,81 +1,68 @@
-# ember-cordova [![Build Status](https://travis-ci.org/poetic/ember-cli-cordova.svg?branch=master)](https://travis-ci.org/poetic/ember-cli-cordova) [![Gitter](https://badges.gitter.im/poetic/ember-cli-cordova.svg)](https://gitter.im/poetic/ember-cli-cordova?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+#ember-cordova
 
-I will not be focusing on backward compatibility with older ember-cli versions
-as it's moving too fast and the API is constantly changing. I will always have
-this working with the latest stable release of ember-cli.
+ember-cordova simplifies building Cordova applications with Ember.js.
 
-## Goals
+It includes a CLI for builds, hooks, device event bindings, and handles splash screens, icons and a growing number of supported Ember/Cordova plugin bindings.
 
-To provide a toolchain tightly integrated with ember-cli to make developing hybrid
-apps with cordova and ember as simple as possible.
+1) Platforms & Requirements
+2) Getting Started
+3) Features and Documentation;
+4) Upcoming Extensions;
+5) Contributing;
+6) Credits
 
-## Supported Platforms
+##Platforms & Requirements
 
-Android and iOS. While we don't plan on actively supporting other platforms,
-feel free to open an issue or submit a pull request.
+We require Ember 2.3 or greater. Supported Cordova platforms are iOS
+and Android.
 
-## Required Ember Versions
+For support with older Ember versions, look at [ember-cli-cordova](https://github.com/poetic/ember-cli-cordova)
 
-Releases as of 0.1.0 require Ember 2.x and ember-cli 2.3.0.
+##Getting Started
 
-The lastest release for Ember 1.x is 0.0.19 and requires at least ember-cli >= 0.1.1
-
-## Getting Started
-
-Please see our Getting Started guide
-[here](https://github.com/poetic/ember-cli-cordova/blob/master/docs/getting-started.md)
-
-## Blueprints
-+ `ember g cordova-init com.reverse.domain --platform=android` Required generator
-  that sets up the cordova project with a few tweaks to the ember app
-+ (optional) `ember g cordova-starter-kit` Adds some packages and files that makes up the
-  base setup for projects I develop.
-
-## Commands
-+ `ember cordova:open` open xcode project
-+ `ember cordova:build --environment=production --platform=ios` build cordova project
-+ `ember cordova:archive 0.0.2 --environment=staging --commit --tag` archive ios project with xcode
-+ `ember cordova:prepare` needs to be run after cloning a project
-+ `ember cordova` Passes commands(plugin(s), platform(s), run, emulate) and arguments to the cordova command
-+ `ember help` ember cli help with a section for addon provided commands as well
-
-# Docs
-
-Documentation can be found found in the docs directory [here](https://github.com/poetic/ember-cli-cordova/tree/master/docs).
-
-- [Getting Started](https://github.com/poetic/ember-cli-cordova/blob/master/docs/getting-started.md)
-- [Configuration](https://github.com/poetic/ember-cli-cordova/blob/master/docs/configuration.md)
-- [FAQ](https://github.com/poetic/ember-cli-cordova/blob/master/docs/faq.md)
-
-# Dependency Docs
-
--  [ember-cli](http://ember-cli.com)
--  [cordova](http://cordova.apache.org/docs/en/4.0.0/)
-
-# Contributing
-
-## Working with master
-
-``` sh
-git clone https://github.com/poetic/ember-cli-cordova.git
-cd ember-cli-cordova
-npm i && bower i
-npm link
-ember new CordovaTest
-cd CordovaTest
-npm install --save-dev ember-cli-cordova
-npm link ember-cli-cordova
+```
+  ember install ember-cordova
 ```
 
-After this, any changes you make to the cloned repo will be instantly reflected
-in the test app you generated. It just symlinks the node_modules folder.
+Installing will init a Cordova project for you at
+ember-cordova/cordova, with your Ember Apps name as the Cordova App name.
+If you already have a Cordova project here it will not be overwritten.
 
-# Example App
+As a final step, add your desired platforms, e.g.:
 
-You can find an example app using this here:
-[jakecraige/ember-cli-cordova-example-app](https://github.com/jakecraige/ember-cli-cordova-example-app)
+```
+ember cdv platform add ios
+ember cdv platform add android
+```
 
-# Credits
+##Features and Documentation
+* [CLI](docs/cli.md)
+* [Cordova Service & Event Bindings](docs/services/cordova.md])
+* Device:
+*  *  [Platform Service](docs/services/platform.md)
+*  *  [Splash Screen Management](docs/services/splash.md)
+* [Icon Management](docs/services/icons.md)
+* [Hooks](docs/hooks.md)
+* [Available Plugins](docs/plugins.md)
 
-[ember-cli](https://github.com/stefanpenner/ember-cli)
-[ember](https://github.com/emberjs/emberjs)
+##Upcoming Extensions
+
+We are working on four major items right now:
+
+1. Improving test coverage;
+2. Livereload improvements;
+3. Bindings to Cordova Plugins [see plugins](docs/plugins.md); and
+4. Either having ember install ember-cordova-plugin-foo install both the
+ember addon & cordova plugin, or achieving the same through ember
+cdv:install foo.
+
+##Contributing
+
+PRs are very welcome. You can read our style guides [here](https://github.com/isleofcode/style-guide).
+
+If you are unsure about your contribution idea, please feel free to
+open an Issue for feedback.
+
+##Credits
+
+ember-cordova is maintained by [Isle of Code](https://isleofcode.com), and started as a fork of [ember-cli-cordova](https://github.com/poetic/ember-cli-cordova).
