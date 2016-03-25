@@ -1,5 +1,5 @@
 {
-  "name": "ember-cli-cordova",
+  "name": "ember-cordova",
   "version": "0.1.0-beta-2",
   "description": "A tool for creating hybrid apps using a combination of ember-cli and cordova ",
   "homepage": "https://github.com/poetic/ember-cli-cordova",
@@ -29,7 +29,7 @@
     "ember-addon"
   ],
   "dependencies": {
-    "broccoli-funnel": "^0.2.3",
+    "broccoli-funnel": "^1.0.0",
     "broccoli-merge-trees": "^1.1.0",
     "chalk": "^0.4.0",
     "ember-cli-babel": "^5.1.5",

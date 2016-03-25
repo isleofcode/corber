@@ -1,20 +1,22 @@
 'use strict';
+var rasterizeIcons = require('./broccoli-plugins/rasterize-icons/plugin');
+var rasterizeSplashscreen = require('./broccoli-plugins/rasterize-splashscreen/plugin');
 
 var path = require('path');
 var fs = require('fs');
 var commands = require('./lib/commands');
-var postBuild = require('./lib/tasks/post-build');
 var defaults = require('lodash').defaults;
 var chalk = require('chalk');
 var mergeTrees = require('broccoli-merge-trees');
 var Funnel = require('broccoli-funnel');
 
 module.exports = {
-  name: 'ember-cli-cordova',
+  name: 'ember-cordova',
 
   _isTargetCordova: function () {
-    return !process.env.EMBER_CLI_CORDOVA ||
-      ['0', 'off', 'false', 'no'].indexOf(process.env.EMBER_CLI_CORDOVA.toLowerCase()) === -1;
+    return true;
+    //return !process.env.EMBER_CLI_CORDOVA ||
+    //  ['0', 'off', 'false', 'no'].indexOf(process.env.EMBER_CLI_CORDOVA.toLowerCase()) === -1;
   },
 
   config: function (env, config) {
@@ -49,16 +51,6 @@ module.exports = {
 
   cdvConfig: function () {
     return this.project.config(process.env.EMBER_ENV || 'development').cordova;
-  },
-
-  postBuild: function () {
-    if (this._isTargetCordova()) {
-      return postBuild(this.project, this.cdvConfig())();
-    }
-    else {
-      return function () {
-      };
-    }
   },
 
   treeForPublic: function (tree) {
@@ -111,6 +103,10 @@ module.exports = {
       return mergeTrees([tree, pluginsTree]);
     }
 
+    
+
+
     return tree;
-  }
+  },
+
 };

@@ -1,4 +1,4 @@
-# ember-cli-cordova [![Build Status](https://travis-ci.org/poetic/ember-cli-cordova.svg?branch=master)](https://travis-ci.org/poetic/ember-cli-cordova) [![Gitter](https://badges.gitter.im/poetic/ember-cli-cordova.svg)](https://gitter.im/poetic/ember-cli-cordova?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+# ember-cordova [![Build Status](https://travis-ci.org/poetic/ember-cli-cordova.svg?branch=master)](https://travis-ci.org/poetic/ember-cli-cordova) [![Gitter](https://badges.gitter.im/poetic/ember-cli-cordova.svg)](https://gitter.im/poetic/ember-cli-cordova?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 I will not be focusing on backward compatibility with older ember-cli versions
 as it's moving too fast and the API is constantly changing. I will always have

@@ -1,7 +1,7 @@
 /* globals cordova */
 
 import config from '../config/environment';
-import reloadInitializer from 'ember-cli-cordova/initializers/in-app-livereload';
+import reloadInitializer from 'ember-cordova/initializers/in-app-livereload';
 
 var inAppReload = reloadInitializer.initialize;
 

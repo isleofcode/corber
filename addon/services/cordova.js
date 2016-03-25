@@ -1,10 +1,16 @@
-/* jshint esnext:true */
-
 import Ember from 'ember';
 
+const {
+  A,
+  Service,
+  Evented,
+  RSVP
+} = Ember;
+
+const { Promise } = RSVP;
+
 // from https://cordova.apache.org/docs/en/4.0.0/cordova_events_events.md.html
-// use var because cordova/android was throwing errors re: const && strict mode
-var CORDOVA_EVENTS = Ember.A([
+const CORDOVA_EVENTS = new A([
   'deviceready',
   'pause',
   'resume',
@@ -22,30 +28,58 @@ var CORDOVA_EVENTS = Ember.A([
   'offline'
 ]);
 
-// the cordova service listens for cordova events emitted to the document,
-// and triggers the same events in emberland.
-//
-// subscribe to cordova events as such:
-//
-// ```javascript
-// export default MyEmberObject.extend({
-//   cordova: Ember.inject.service()
-//
-//   init: function() {
-//     cordova.on('resume', function() { console.log('i am resumed'); });
-//   }
-// });
-// ```
-export default Ember.Service.extend(
-  Ember.Evented, {
+export default Service.extend(Evented, {
+  _listeners: null,
+  _ready: null,
+  _readyHasTriggered: false,
 
-  setEventTriggers: Ember.on('init', function() {
-    var _this = this;
+  init() {
+    this._super();
 
-    CORDOVA_EVENTS.forEach(function(eventName) {
-      Ember.$(document).on(eventName, function() {
-        _this.trigger(eventName);
-      });
+    this._listeners = [];
+    this._ready = RSVP.defer();
+
+    this.setupListeners();
+    this.setupReady();
+  },
+
+  willDestroy() {
+    this._super();
+    this.teardownListeners();
+
+    if (this._ready) {
+      this._ready.reject();
+      this._ready = null;
+    }
+  },
+
+  ready() {
+    return this._readyHasTriggered ? Promise.resolve() : this._ready.promise;
+  },
+
+  setupListeners() {
+    CORDOVA_EVENTS.forEach(name => {
+      const listener = {
+        name,
+        method: e => { this.trigger(name, e); }
+      };
+
+      this._listeners.push(listener);
+      document.addEventListener(listener.name, listener.method, true);
     });
-  })
+  },
+
+  setupReady() {
+    this.on('deviceready', () => {
+      this._readyHasTriggered = true;
+      this._ready.resolve();
+      this._ready = null;
+    });
+  },
+
+  teardownListeners() {
+    this._listeners.forEach(listener => {
+      document.removeEventListener(listener.name, listener.method, true);
+    });
+  }
 });
