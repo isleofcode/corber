@@ -16,6 +16,12 @@ module.exports = {
     }
   ],
 
+  fileMapTokens: function() {
+    return {
+      __root__: function() { return '/'; }
+    };
+  },
+
   normalizeEntityName: function() {
     // h/t mirage
     // this prevents an error when the entityName is

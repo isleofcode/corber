@@ -31,7 +31,7 @@ If you are migrating from ember-cli-cordova, as a pre step move your
   ember install ember-cordova
 ```
 
-You can optionally pass name & cordovaId params, which will set the id &
+You can optionally pass name & cordovaid params, which will set the id &
 display name of your Cordova application. If none exist, your Ember Apps
 name will be used.
 
