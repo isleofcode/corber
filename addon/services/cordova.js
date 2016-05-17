@@ -70,7 +70,7 @@ export default Service.extend(Evented, {
   },
 
   setupReady() {
-    this.on('deviceready', () => {
+    document.addEventListener('deviceready', () => {
       this._readyHasTriggered = true;
       this._ready.resolve();
       this._ready = null;
@@ -81,5 +81,6 @@ export default Service.extend(Evented, {
     this._listeners.forEach(listener => {
       document.removeEventListener(listener.name, listener.method, true);
     });
+    document.removeEventListener('deviceready');
   }
 });
