@@ -10,16 +10,17 @@ const isObject      = td.matchers.isA(Object);
 const isFunction    = td.matchers.isA(Function);
 
 describe('Bash Task', () => {
-  let execDouble, bashCmd;
+  let command, options, execDouble, bashTask;
 
   beforeEach(() => {
+    command = 'foo';
+    options = { cwd: '/path/to/project' };
     execDouble = td.replace(childProcess, 'exec');
 
-    bashCmd = new BashTask(defaults(mockProject, {
-      command: 'foo'
+    bashTask = new BashTask(defaults(mockProject, {
+      command: command,
+      options: options
     }));
-
-    bashCmd.run();
   });
 
   afterEach(() => {
@@ -27,6 +28,7 @@ describe('Bash Task', () => {
   });
 
   it('attempts to exec cmd', () => {
-    td.verify(execDouble('foo', isObject, isFunction));
+    bashTask.run();
+    td.verify(execDouble('foo', options, isFunction));
   });
 });
