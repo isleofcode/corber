@@ -7,16 +7,19 @@ const BashTask      = require('../../../lib/tasks/bash');
 const mockProject   = require('../../fixtures/ember-cordova-mock/project');
 const defaults      = require('lodash').defaults;
 const isObject      = td.matchers.isA(Object);
+const isFunction    = td.matchers.isA(Function);
 
 describe('Bash Task', () => {
   let execDouble, bashCmd;
 
   beforeEach(() => {
-    execDouble = td.replace(childProcess, 'execSync');
+    execDouble = td.replace(childProcess, 'exec');
 
     bashCmd = new BashTask(defaults(mockProject, {
       command: 'foo'
     }));
+
+    bashCmd.run();
   });
 
   afterEach(() => {
@@ -24,8 +27,6 @@ describe('Bash Task', () => {
   });
 
   it('attempts to exec cmd', () => {
-    bashCmd.run();
-
-    td.verify(execDouble('foo', isObject));
+    td.verify(execDouble('foo', isObject, isFunction));
   });
 });
