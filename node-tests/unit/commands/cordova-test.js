@@ -19,7 +19,6 @@ describe('Cordova Command', () => {
     CordovaCmd.project = mockProject.project;
 
     bashDouble = td.replace(BashTask.prototype, 'runCommand');
-
   });
 
   afterEach(() => {
