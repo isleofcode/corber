@@ -2,26 +2,15 @@
 
 const td            = require('testdouble');
 const expect        = require('../../helpers/expect');
-const Promise       = require('ember-cli/lib/ext/promise');
-
-const BuildCmd      = require('../../../lib/commands/build');
-const EmberBldTask  = require('../../../lib/tasks/ember-build');
-const CdvBuildTask  = require('../../../lib/tasks/cordova-build');
-const LinkTask      = require('../../../lib/tasks/link-environment');
-const HookTask      = require('../../../lib/tasks/run-hook');
+const PromiseExt    = require('ember-cli/lib/ext/promise');
 
 const mockProject   = require('../../fixtures/ember-cordova-mock/project');
 
 describe('Build Command', () => {
-  beforeEach(() => {
-    BuildCmd.ui = mockProject.ui;
+  let tasks, BuildCmd, buildEnv, cordovaPlatform, isRelease;
 
-    BuildCmd.project = mockProject.project;
-    BuildCmd.project.config = function() {
-      return {
-        locationType: 'hash'
-      }
-    }
+  beforeEach(() => {
+    tasks = mockTasks();
   });
 
   afterEach(() => {
@@ -29,47 +18,28 @@ describe('Build Command', () => {
   });
 
   function runBuild(_options) {
-    let options = _options || mockProject;
+    let options = _options || {};
+    BuildCmd.run(options);
+  }
 
-    return BuildCmd.run(options);
+  function mockBuildCommand(configOptions) {
+    BuildCmd = require('../../../lib/commands/build');
+
+    BuildCmd.project = mockProject.project;
+    BuildCmd.ui = mockProject.ui;
+
+    BuildCmd.project.config = function() {
+      return configOptions || {};
+    };
+
+    return BuildCmd;
   }
 
   context('when locationType is hash', () => {
-    let tasks, buildEnv, cordovaPlatform;
-
     beforeEach(() => {
-      tasks = mockTasks();
+      let config = { locationType: 'hash' };
+      mockBuildCommand(config);
     });
-
-    function mockTasks() {
-      let tasks = [];
-
-      td.replace(HookTask.prototype, 'run',  (hookName) => {
-        tasks.push('hook ' + hookName);
-        return Promise.resolve();
-      });
-
-      td.replace(EmberBldTask.prototype, 'run', (_buildEnv) => {
-        buildEnv = _buildEnv;
-
-        tasks.push('ember-build');
-        return Promise.resolve();
-      });
-
-      td.replace(CdvBuildTask.prototype, 'run', (_cordovaPlatform) => {
-        cordovaPlatform = _cordovaPlatform;
-
-        tasks.push('cordova-build');
-        return Promise.resolve();
-      });
-
-      td.replace(LinkTask.prototype, 'run', () => {
-        tasks.push('link');
-        return Promise.resolve();
-      });
-
-      return tasks;
-    }
 
     it('exits cleanly', () => {
       expect(runBuild).not.to.throw(Error);
@@ -88,38 +58,141 @@ describe('Build Command', () => {
       ]);
     });
 
-    it('passes env to ember build task', () => {
+    context('when env option is passed', () => {
       let passedEnv = 'development';
 
-      runBuild({
-        environment: passedEnv
+      beforeEach(() => {
+        let options = { environment: passedEnv }
+        runBuild(options);
       });
 
-      expect(buildEnv).to.equal(passedEnv);
+      it('passes the env to the ember build task', () => {
+        expect(buildEnv).to.equal(passedEnv);
+      });
     });
 
-    it('passes platform to cordova build task', () => {
+    context('when platform option is passed', () => {
       let passedPlatform = 'ios';
 
-      runBuild({
-        platform: passedPlatform
+      beforeEach(() => {
+        let options = { platform: passedPlatform };
+        runBuild(options);
       });
 
-      expect(cordovaPlatform).to.equal(passedPlatform);
+      it('passes platform to cordova build task', () => {
+        expect(cordovaPlatform).to.equal(passedPlatform);
+      });
+    });
+
+    context('when release option is passed', () => {
+      context('as false', () => {
+        beforeEach(() => {
+          let options = { release: false };
+          runBuild(options);
+        });
+
+        it('does not build a cordova release', () => {
+          expect(isRelease).to.equal(false);
+        });
+      });
+
+      context('as undefined', () => {
+        beforeEach(() => {
+          let options = { release: undefined };
+          runBuild(options);
+        });
+
+        it('does not build a cordova release', () => {
+          expect(isRelease).to.equal(false);
+        });
+      });
+
+      context('as true', () => {
+        beforeEach(() => {
+          let options = { release: true };
+          runBuild(options);
+        });
+
+        it('builds a cordova release', () => {
+          expect(isRelease).to.equal(true);
+        });
+      });
+
+      context('as null', () => {
+        beforeEach(() => {
+          let options = { release: null };
+          runBuild(options);
+        });
+
+        it('builds a cordova release', () => {
+          expect(isRelease).to.equal(true);
+        });
+      });
+
+      context('as not undefined', () => {
+        beforeEach(() => {
+          let options = { release: '' };
+          runBuild(options);
+        });
+
+        it('builds a cordova release', () => {
+          expect(isRelease).to.equal(true);
+        });
+      });
     });
   });
 
   context('when locationType is not hash', () => {
     beforeEach(() => {
       BuildCmd.project.config = function() {
-        return {
-          locationType: 'auto'
-        }
-      }
+        let config = { locationType: 'auto' };
+        return config;
+      };
     });
 
     it('throws', () => {
       expect(runBuild).to.throw(Error);
     });
   });
+
+  function mockTasks() {
+    let tasks = [];
+
+    td.replace('../../../lib/tasks/run-hook', function() {
+      this.run = function(hookName) {
+        tasks.push('hook ' + hookName);
+        return PromiseExt.resolve();
+      };
+    });
+
+    td.replace('../../../lib/tasks/ember-build', function() {
+      this.run = function(_buildEnv) {
+        buildEnv = _buildEnv;
+
+        tasks.push('ember-build');
+        return PromiseExt.resolve();
+      };
+    });
+
+    td.replace('../../../lib/tasks/cordova-build', function(opts) {
+      if (opts !== undefined) {
+        isRelease = opts.isRelease;
+        cordovaPlatform = opts.platform;
+      }
+
+      this.run = function() {
+        tasks.push('cordova-build');
+        return PromiseExt.resolve();
+      };
+    });
+
+    td.replace('../../../lib/tasks/link-environment', function() {
+      this.run = function() {
+        tasks.push('link');
+        return PromiseExt.resolve();
+      };
+    });
+
+    return tasks;
+  }
 });
