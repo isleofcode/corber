@@ -4,7 +4,7 @@ const td            = require('testdouble');
 const expect        = require('../../helpers/expect');
 
 const mockProject   = require('../../fixtures/ember-cordova-mock/project');
-const isObject      = td.matchers.isA(Object);
+const defaults      = require('lodash').defaults;
 
 describe('Cordova Build Task', () => {
   let commandString, buildTask;
