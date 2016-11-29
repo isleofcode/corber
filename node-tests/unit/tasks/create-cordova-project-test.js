@@ -87,7 +87,14 @@ describe('Cordova Create Task', function() {
     setupCreateTask();
     create.run();
 
-    var matcher = td.matchers.contains({lib: { www: { url: 'ember-cordova-template'}}});
+    var matcher = td.matchers.contains({
+      lib: {
+        www: {
+          url: 'ember-cordova-template'
+        }
+      }
+    });
+
     td.verify(rawDouble(isString, isString, isString, matcher));
   });
 
