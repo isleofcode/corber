@@ -1,15 +1,16 @@
 'use strict';
 
 var td              = require('testdouble');
-var fs              = require('fs');
-
+var Promise         = require('ember-cli/lib/ext/promise');
 var mockProject     = require('../../fixtures/ember-cordova-mock/project');
-var expect          = require('../../helpers/expect');
+var fsUtils         = require('../../../lib/utils/fs-utils');
 
+var expect          = require('../../helpers/expect');
 var contains        = td.matchers.contains;
 var isString        = td.matchers.isA(String);
+var isObject        = td.matchers.isA(Object);
 
-var setupTask = function(mockTemplate) {
+var setupTask = function(shouldMockTemplate) {
   var CreateShell = require('../../../lib/tasks/create-livereload-shell');
 
   var shellTask = new CreateShell({
@@ -17,9 +18,9 @@ var setupTask = function(mockTemplate) {
     ui: mockProject.ui
   });
 
-  if (mockTemplate) {
+  if (shouldMockTemplate) {
     td.replace(CreateShell.prototype, 'getShellTemplate', function() {
-      return '{{liveReloadUrl}}';
+      return Promise.resolve('{{liveReloadUrl}}');
     });
   }
 
@@ -30,22 +31,37 @@ describe('Create Cordova Shell Task', function() {
   var writeDouble;
 
   beforeEach(function() {
-    writeDouble = td.replace(fs, 'writeFileSync');
+    writeDouble = td.replace(fsUtils, 'write');
   });
 
   afterEach(function() {
     td.reset();
   });
 
-  it('reads in the template index.html', function() {
-    var shellTask = setupTask();
-    var readDouble = td.replace(fs, 'readFileSync');
+  describe('getShellTemplate', function() {
+    it('reads the right path', function() {
+      var shellTask = setupTask();
+      var readDouble = td.replace(fsUtils, 'read');
 
-    expect(shellTask.run(4200)).to.eventually.throw(Error);
-    td.verify(readDouble(
-      contains('templates/livereload-shell/index.html'),
-      isString
-    ));
+      shellTask.getShellTemplate();
+      td.verify(readDouble(
+        contains('templates/livereload-shell/index.html'),
+        isObject
+      ));
+    });
+  });
+
+  it('attempts to get shell template', function() {
+    var shellTask = setupTask();
+    var called = false;
+
+    td.replace(shellTask, 'getShellTemplate', function() {
+      called = true;
+      return Promise.resolve();
+    });
+
+    shellTask.run();
+    expect(called).to.equal(true);
   });
 
   it('replaces {{liveReloadUrl}} and saves', function() {
@@ -75,9 +91,12 @@ describe('Create Cordova Shell Task', function() {
     });
   });
 
-  it('rejects on error', function() {
-    td.replace(fs, 'readFileSync');
+  it('catches errors', function() {
+    td.replace(fsUtils, 'write', function() {
+      throw new Error()
+    });
+
     var shellTask = setupTask(true);
-    expect(shellTask.run()).to.eventually.be.rejected;
+    expect(shellTask.run()).to.eventually.throw(Error);
   });
 });

@@ -5,6 +5,8 @@ var td              = require('testdouble');
 var expect          = require('../../../helpers/expect');
 var mockProject     = require('../../../fixtures/ember-cordova-mock/project');
 var ValidateNav     = require('../../../../lib/tasks/validate/allow-navigation');
+var logger          = require('../../../../lib/utils/logger');
+var contains        = td.matchers.contains;
 /* eslint-enable max-len */
 
 describe('Validate Allow Navigation Test', function() {
@@ -24,11 +26,12 @@ describe('Validate Allow Navigation Test', function() {
       return 'prop';
     });
 
+    var warnDouble = td.replace(logger, 'warn');
     var validateNav = setupTask();
     return validateNav.run().then(function() {
-      expect(validateNav.ui.output).to.contain(
+      td.verify(warnDouble(contains(
         'is unsafe and should not be used in production'
-      );
+      )));
     });
   });
 
@@ -39,7 +42,7 @@ describe('Validate Allow Navigation Test', function() {
 
     var validateNav = setupTask();
     return validateNav.run(true).catch(function(error) {
-      expect(validateNav.ui.output).to.include('needs the following flag');
+      expect(error.message).to.include('needs the following flag');
     });
   });
 

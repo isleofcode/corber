@@ -31,7 +31,7 @@ module.exports = {
     var projectPath = cordovaPath(this.project);
     var assets = cordovaAssets.getPaths(platform, projectPath);
 
-    cordovaAssets.validatePaths(assets.assetsPath, projectPath, this.ui);
+    cordovaAssets.validatePaths(assets.assetsPath, projectPath);
 
     var pluginsTree = new Funnel('ember-cordova/cordova', {
       srcDir:  assets.assetsPath,

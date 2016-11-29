@@ -2,7 +2,7 @@
 
 var expect          = require('../../helpers/expect');
 var td              = require('testdouble');
-var fs              = require('fs');
+var fsUtils         = require('../../../lib/utils/fs-utils');
 
 var mockProject     = require('../../fixtures/ember-cordova-mock/project');
 var CordovaValidator = require('../../../lib/utils/cordova-validator');
@@ -66,7 +66,7 @@ describe('Cordova Validator', function() {
 
   context('validateDirExists', function() {
     it('fulfills when plugin dir exists', function() {
-      td.replace(fs, 'existsSync', function() {
+      td.replace(fsUtils, 'existsSync', function() {
         return true;
       });
 
@@ -74,7 +74,7 @@ describe('Cordova Validator', function() {
     });
 
     it('rejects when plugin dir does not exist', function() {
-      td.replace(fs, 'existsSync', function() {
+      td.replace(fsUtils, 'existsSync', function() {
         return false;
       });
 

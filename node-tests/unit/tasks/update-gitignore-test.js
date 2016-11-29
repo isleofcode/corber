@@ -1,27 +1,28 @@
 'use strict';
 
 var td              = require('testdouble');
-var fs              = require('fs');
-var expect          = require('../../helpers/expect');
-var GitIgnore       = require('../../../lib/tasks/update-gitignore');
 var mockProject     = require('../../fixtures/ember-cordova-mock/project');
+var fsUtils         = require('../../../lib/utils/fs-utils');
+var Promise         = require('ember-cli/lib/ext/promise');
+
+var expect          = require('../../helpers/expect');
+var contains        = td.matchers.contains;
 
 describe('Update gitignore Task', function() {
-  beforeEach(function() {
-    td.reset();
-  });
 
   var createTask = function() {
+    var GitIgnore = require('../../../lib/tasks/update-gitignore');
     return new GitIgnore({
       project: mockProject.project,
       ui: mockProject.ui
     });
   };
 
-  it('attempts to write ignore data to .gitignore', function() {
-    td.replace(fs, 'closeSync');
-    td.replace(fs, 'openSync');
+  afterEach(function() {
+    td.reset();
+  });
 
+  it('attempts to write ignore data to .gitignore', function() {
     var expectedGitkeep = '\n' +
       'ember-cordova/tmp-livereload\n' +
       'ember-cordova/cordova/www/*\n' +
@@ -31,22 +32,27 @@ describe('Update gitignore Task', function() {
       'ember-cordova/cordova/platforms/*\n' +
       '!ember-cordova/cordova/platforms/.gitkeep\n'
 
-    var appendDouble = td.replace(fs, 'appendFileSync');
-    var task = createTask();
-    task.run();
+    var writePath, writeContent = undefined;
+    td.replace(fsUtils, 'append', function(path, content) {
+      writePath = path;
+      writeContent = content;
+      return Promise.resolve();
+    });
 
-    td.verify(appendDouble('.gitignore', expectedGitkeep));
+    var task = createTask();
+
+    return task.run().then(function() {
+      expect(writeContent).to.equal(expectedGitkeep);
+      expect(writePath).to.equal('.gitignore');
+    });
   });
 
   it('stubs empty gitkeeps', function() {
     var calls = [];
-    td.replace(fs, 'openSync', function(path) {
+    td.replace(fsUtils, 'write', function(path) {
       calls.push(path);
       return;
     });
-    td.replace(fs, 'closeSync');
-    td.replace(fs, 'appendFileSync');
-
 
     var task = createTask();
     return task.run().then(function() {
@@ -59,12 +65,15 @@ describe('Update gitignore Task', function() {
   });
 
   it('outputs an error message and resolves if write fails', function() {
-    td.replace(fs, 'appendFileSync', function() {
-      throw new Error();
+    td.replace(fsUtils, 'append', function() {
+      return Promise.reject();
     });
+    var logDouble = td.replace('../../../lib/utils/logger');
     var task = createTask();
-    task.run();
 
-    expect(task.ui.output).to.contain('failed to update .gitignore');
+    return task.run().then(function() {
+      var expected = 'failed to update .gitignore';
+      td.verify(logDouble.error(contains(expected)));
+    });
   });
 });

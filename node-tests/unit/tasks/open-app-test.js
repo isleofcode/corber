@@ -6,7 +6,6 @@ var BashTask        = require('../../../lib/tasks/bash');
 var OpenAppTask     = require('../../../lib/tasks/open-app');
 var expect          = require('../../helpers/expect');
 var openCommand     = require('../../../lib/utils/open-app-command');
-
 var mockProject     = require('../../fixtures/ember-cordova-mock/project');
 var _merge          = require('lodash').merge;
 var isObject        = td.matchers.isA(Object);
@@ -47,8 +46,9 @@ describe('Open App Task', function() {
 
   it('outputs an error if no platform is specified', function() {
     openApp.platform = 'invalidPlatform';
-    openApp.run();
 
-    expect(openApp.ui.output).to.contain('platform is not supported');
+    expect(function() {
+      openApp.run()
+    }).to.throw(/platform is not supported/);
   });
 });

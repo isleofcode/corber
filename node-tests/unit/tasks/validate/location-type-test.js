@@ -19,7 +19,7 @@ describe('Validate Root Url', function() {
     td.reset();
   });
 
-  it('throws an easyError with config.locationType is not hash', function() {
+  it('throws an error with config.locationType is not hash', function() {
     var config = { locationType: 'auto' };
 
     expect(function() {
@@ -27,7 +27,7 @@ describe('Validate Root Url', function() {
     }).to.throw(Error);
   });
 
-  it('throws an easyError with config.locationType is blank', function() {
+  it('throws an error with config.locationType is blank', function() {
     var config = {};
 
     expect(function() {

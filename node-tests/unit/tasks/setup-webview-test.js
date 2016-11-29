@@ -1,11 +1,13 @@
 'use strict';
 
 var td              = require('testdouble');
-var expect          = require('../../helpers/expect');
 var isAnything      = td.matchers.anything();
+var logger          = require('../../../lib/utils/logger');
+
 var CdvRawTask      = require('../../../lib/tasks/cordova-raw');
 var SetupViewTask   = require('../../../lib/tasks/setup-webview');
 var mockProject     = require('../../fixtures/ember-cordova-mock/project');
+var contains        = td.matchers.contains;
 
 
 describe('Setup Webview Task', function() {
@@ -31,15 +33,17 @@ describe('Setup Webview Task', function() {
   });
 
   it('warns the user & alerts them of install', function() {
+    var warnDouble = td.replace(logger, 'warn');
+    var successDouble = td.replace(logger, 'success');
+
     setupTask.run();
+    td.verify(warnDouble(contains(
+      'ember-cordova initializes with upgraded WebViews.'
+    )));
 
-    expect(setupTask.ui.output).to.contain(
-      'WARNING: ember-cordova initializes with upgraded WebViews.'
-    );
-
-    expect(setupTask.ui.output).to.contain(
+    td.verify(successDouble(contains(
       'Initializing cordova with upgraded WebView'
-    );
+    )));
   });
 
   it('uses cordova-plugin-wkwebview-engine for ios', function() {

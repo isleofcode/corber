@@ -3,6 +3,8 @@
 var td              = require('testdouble');
 var expect          = require('../../../helpers/expect');
 var mockProject     = require('../../../fixtures/ember-cordova-mock/project');
+var logger          = require('../../../../lib/utils/logger');
+var contains        = td.matchers.contains;
 
 var ValidateRoot    = require('../../../../lib/tasks/validate/root-url');
 
@@ -43,8 +45,10 @@ describe('Validate Root Url', function() {
       return false;
     });
 
+    var warnDouble = td.replace(logger, 'warn');
+
     return validateRoot.run(mockProject.config(), true).then(function() {
-      expect(validateRoot.ui.output).to.contain('Build Warning');
+      td.verify(warnDouble(contains('You have passed the --force flag')));
     })
   });
 
@@ -55,10 +59,8 @@ describe('Validate Root Url', function() {
 
     expect(function() {
       validateRoot.invalidIndex()
-    }).to.throw(Error);
-
-    expect(mockProject.ui.output).to.include(
-      '{\{rootURL\}\} or \{\{baseURL\}\} in app\/index.html has a leading slash'
+    }).to.throw(
+      /{\{rootURL\}\} or \{\{baseURL\}\} in app\/index.html has a leading slash/
     );
   });
 
