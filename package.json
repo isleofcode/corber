@@ -82,7 +82,7 @@
     "broccoli-asset-rev": "^2.2.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
-    "ember-ajax": "2.5.4",
+    "ember-ajax": "2.5.5",
     "ember-cli": "^2.7.0",
     "ember-cli-app-version": "^2.0.1",
     "ember-cli-babel": "^5.2.4",
