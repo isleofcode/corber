@@ -55,7 +55,7 @@
     "mobile"
   ],
   "peerDependencies": {
-    "ember-cli": "^2.7.0"
+    "ember-cli": "2.11.0"
   },
   "dependencies": {
     "broccoli-funnel": "^1.0.1",
