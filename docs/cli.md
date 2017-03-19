@@ -6,6 +6,14 @@ insted of`cordova`, for example `ember cdv:{command}`.
 You can pass a command to cordova without
 ember-cordova interference with ember cdv build, vs. ember cdv:build.
 
+Enable verbose logging by prefixing your command with `DEBUG=$scope`, where
+`$scope` is one of:
+
+- `cordova`, to include log output from cordova-lib (e.g. cdv build phase);
+- `ember-cli`, to include log output from e-cli (e.g. ember build phase); or
+- `*`, to include cdv + e-cli log output, plus all other available
+  [heimdalljs-logger](https://github.com/heimdalljs/heimdalljs-logger) trees
+
 ### Available Commands
 * ember cdv:open
 * ember cdv:build
