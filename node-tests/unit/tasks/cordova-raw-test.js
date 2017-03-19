@@ -73,12 +73,56 @@ describe('Cordova Raw Task', function() {
       });
     });
 
-    it('logs verbosely when requested', function() {
-      td.replace(cordovaLogger, 'setLevel');
-      var raw = setupTask();
+    describe('verbosity', function() {
+      var raw;
+      var setDebug = function setDebug(term) {
+        var cachedDebug = process.env.DEBUG;
 
-      return raw.run({ verbose: true }).then(function() {
-        td.verify(cordovaLogger.setLevel('verbose'));
+        before(function() {
+          process.env.DEBUG = term;
+        });
+
+        after(function() {
+          process.env.DEBUG = cachedDebug;
+        });
+      }
+
+      beforeEach(function() {
+        td.replace(cordovaLogger, 'setLevel');
+        raw = setupTask();
+      });
+
+      context('when env DEBUG = cordova', function() {
+        setDebug('cordova');
+
+        it('logs verbosely', function() {
+          return raw.run().then(function() {
+            td.verify(cordovaLogger.setLevel('verbose'));
+          });
+        });
+      });
+
+      context('when env DEBUG = *', function() {
+        setDebug('*');
+
+        it('logs verbosely', function() {
+          return raw.run().then(function() {
+            td.verify(cordovaLogger.setLevel('verbose'));
+          });
+        });
+      });
+
+      context('when env DEBUG = undefined', function() {
+        setDebug(undefined);
+
+        it('does not log verbosely', function() {
+          return raw.run().then(function() {
+            td.verify(cordovaLogger.setLevel(), {
+              times: 0,
+              ignoreExtraArgs: true
+            });
+          });
+        });
       });
     });
   });
