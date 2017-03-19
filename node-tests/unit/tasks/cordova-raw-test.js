@@ -23,13 +23,19 @@ describe('Cordova Raw Task', function() {
     td.reset();
   });
 
-  it('attempts to run a raw cordova call', function(done) {
+  it('sets up cdv logging and attempts a raw cordova call', function(done) {
+    // n.b. need these together & at the top of file due to de-duplication of
+    // `cordovaLogger.subscribe` calls on require
+    td.replace(cordovaLogger, 'subscribe');
     td.replace(cordovaProj.raw, 'platform', function() {
       done();
     });
 
     var raw = setupTask();
-    return raw.run();
+
+    return raw.run().then(function() {
+      td.verify(cordovaLogger.subscribe(events));
+    });
   });
 
   describe('with a mock function', function() {
@@ -62,15 +68,6 @@ describe('Cordova Raw Task', function() {
           return args
         })
       ).to.eventually.equal(emberPath);
-    });
-
-    it('sets up Cordova logging', function() {
-      td.replace(cordovaLogger, 'subscribe');
-      var raw = setupTask();
-
-      return raw.run().then(function() {
-        td.verify(cordovaLogger.subscribe(events));
-      });
     });
 
     describe('verbosity', function() {
