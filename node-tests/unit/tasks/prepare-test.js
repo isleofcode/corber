@@ -19,6 +19,6 @@ describe('Prepare Task', function() {
     var prepare = setupPrepareTask();
     prepare.run();
 
-    td.verify(rawDouble({ verbose: false }));
+    td.verify(rawDouble());
   });
 });
