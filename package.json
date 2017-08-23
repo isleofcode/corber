@@ -55,7 +55,7 @@
     "broccoli-funnel": "^1.1.0",
     "broccoli-merge-trees": "1.2.4",
     "chalk": "^2.0.0",
-    "configstore": "3.1.0",
+    "configstore": "3.1.1",
     "copy-dir": "^0.3.0",
     "cordova-common": "^2.0.0",
     "cordova-lib": "^7.0.0",
