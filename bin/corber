@@ -3,13 +3,13 @@
 
 process.title               = 'corber';
 
-const CLI                   = require('../node_modules/ember-cli/lib/cli/cli.js');
-const Project               = require('../node_modules/ember-cli/lib/models/project.js');
+const CLI                   = require('ember-cli/lib/cli/cli.js');
+const Project               = require('ember-cli/lib/models/project.js');
 const UI                    = require('console-ui');
 const resolve               = require('resolve');
 const path                  = require('path');
-const requireAsHash         = require('../node_modules/ember-cli/lib/utilities/require-as-hash');
-const willInterruptProcess  = require('../node_modules/ember-cli/lib/utilities/will-interrupt-process');
+const requireAsHash         = require('ember-cli/lib/utilities/require-as-hash');
+const willInterruptProcess  = require('ember-cli/lib/utilities/will-interrupt-process');
 
 // `process` should be captured before we require any libraries which
 // may use `process.exit` work arounds for async cleanup.
@@ -17,13 +17,13 @@ const willInterruptProcess  = require('../node_modules/ember-cli/lib/utilities/w
 willInterruptProcess.capture(process);
 
 function loadCommands() {
-  const Command = require('../node_modules/ember-cli/lib/models/command.js');
+  const Command = require('ember-cli/lib/models/command.js');
   let hash = requireAsHash('../lib/commands/*.js', Command);
   return hash;
 };
 
 function loadTasks() {
-  const Task = require('../node_modules/ember-cli/lib/models/task.js');
+  const Task = require('ember-cli/lib/models/task.js');
   let hash = requireAsHash('../lib/tasks/*.js', Task);
   return hash;
 };
