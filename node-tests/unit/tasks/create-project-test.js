@@ -10,7 +10,6 @@ const isAnything     = td.matchers.anything;
 const fsUtils        = require('../../../lib/utils/fs-utils');
 const path           = require('path');
 const frameworkType  = require('../../../lib/utils/framework-type');
-const contains       = td.matchers.contains;
 
 let CreateCordova    = require('../../../lib/targets/cordova/tasks/create-project');
 
@@ -61,6 +60,16 @@ describe('Create Project', function() {
       });
     }
   }
+
+  beforeEach(function() {
+    td.replace(fsUtils, 'mkdir', function() {
+      return Promise.resolve();
+    });
+
+    td.replace(fsUtils, 'copy', function() {
+      return Promise.resolve();
+    });
+  });
 
   afterEach(function() {
     td.reset();
@@ -129,24 +138,34 @@ describe('Create Project', function() {
     });
 
     it('inits corber && config directories', function() {
-      let mkDouble = td.replace(fsUtils, 'mkdir');
-      td.replace(fsUtils, 'copy');
+      let mkDirPath = '';
+
+      td.replace(fsUtils, 'mkdir', function(corberPath) {
+        mkDirPath = corberPath;
+        return Promise.resolve();
+      });
 
       initTask(false);
       createTask.run();
-      td.verify(mkDouble(emberCdvPath));
+
+      expect(mkDirPath).to.equal(emberCdvPath);
     });
 
     it('attempts to copy the frameworks config', function() {
-      let copyDouble = td.replace(fsUtils, 'copy');
+      let sourcePath, destPath;
+
+      td.replace(fsUtils, 'copy', function(source, dest) {
+        sourcePath = source;
+        destPath = dest;
+        return Promise.resolve();
+      });
+
       initTask(false);
 
-      createTask.run();
-
-      td.verify(copyDouble(
-        contains('lib/templates/frameworks/ember.js'),
-        emberCdvPath + '/config/framework.js'
-      ));
+      return createTask.run().then(function() {
+        expect(sourcePath).to.include('lib/templates/frameworks/ember.js');
+        expect(destPath).to.equal(path.join(emberCdvPath, 'config', 'framework.js'));
+      });
     });
   });
 });
