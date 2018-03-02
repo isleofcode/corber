@@ -110,19 +110,6 @@ describe('Create Project', function() {
     });
   });
 
-  it('warns vue users of npm engine troubles', function() {
-    td.replace(frameworkType, 'get', function() {
-      return 'vue';
-    });
-
-    initTask(false);
-    let warnDouble = td.replace(createTask, 'warnVueEngine');
-
-    return createTask.run().then(function() {
-      td.verify(warnDouble());
-    });
-  });
-
   context('initDirs', function() {
     let emberCdvPath = path.resolve(
       __dirname, '..', '..',
