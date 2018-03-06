@@ -117,8 +117,8 @@ describe('Start Command', function() {
         return Promise.resolve();
       });
 
-      td.replace(CdvTarget.prototype, 'installedPlatforms', function() {
-        return ['ios'];
+      td.replace(CdvTarget.prototype, 'getInstalledPlatforms', function() {
+        return Promise.resolve(['ios']);
       });
 
       td.replace(LRloadShell.prototype, 'run', function() {

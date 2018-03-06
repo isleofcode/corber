@@ -31,7 +31,7 @@ describe('Android List Emulators', function() {
 
     return listEms().then(function() {
       expect(spawnProps.cmd).to.equal('emulatorPath');
-      expect(spawnProps.args).to.deep.equal(['emulator', '-list-avds']);
+      expect(spawnProps.args).to.deep.equal(['-list-avds']);
     });
   });
 

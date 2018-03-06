@@ -55,7 +55,7 @@ describe('Cordova Target', function() {
     });
   });
 
-  context('installedPlatforms', function() {
+  context('getInstalledPlatforms', function() {
     it('returns platforms in cordova package.json', function() {
       let fsUtils = require('../../../../lib/utils/fs-utils');
       td.replace(fsUtils, 'existsSync', function() {
@@ -75,8 +75,36 @@ describe('Cordova Target', function() {
         project: mockProject.project
       });
 
-      let installed = target.installedPlatforms();
-      expect(installed).to.deep.equal(['ios', 'android']);
+      return target.getInstalledPlatforms().then((platforms) => {
+        expect(platforms).to.deep.equal(['ios', 'android']);
+      });
+    });
+
+    it('falls back to config.xml if package.json is missing', function() {
+      let fsUtils = require('../../../../lib/utils/fs-utils');
+      td.replace(fsUtils, 'existsSync', function () {
+        return false;
+      });
+
+      td.replace('../../../../lib/utils/parse-xml', function() {
+        return Promise.resolve({
+          widget: {
+            platform: [
+              { $: { name: 'p' } },
+              { $: { name: 'q' } },
+            ]
+          }
+        });
+      });
+
+      let CordovaTarget = require('../../../../lib/targets/cordova/target');
+      let target = new CordovaTarget({
+        project: mockProject.project
+      });
+
+      return target.getInstalledPlatforms().then((platforms) => {
+        expect(platforms).to.deep.equal(['p', 'q']);
+      });
     });
   });
 
