@@ -311,13 +311,12 @@ describe('Start Command', function() {
     });
 
     it('throws an error when builds are for a platform that is not installed', function() {
-      let logger = td.replace('../../../lib/utils/logger');
-
-
       let start = setupStart();
-      start.validatePlatform(['ios'], 'android');
+      let fn = () => {
+        start.validatePlatform(['ios'], 'android');
+      };
 
-      td.verify(logger.error(td.matchers.anything()));
+      expect(fn).to.throw();
     });
 
     it('passes when builds are for an installed platform', function() {
