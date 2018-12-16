@@ -82,7 +82,7 @@
     "eslint-plugin-chai-expect": "^2.0.0",
     "loaderjs": "^1.0.0",
     "mocha": "^5.0.0",
-    "mocha-eslint": "2.1.1",
+    "mocha-eslint": "5.0.0",
     "mocha-jshint": "^2.3.1",
     "testdouble": "^3.0.0"
   }
