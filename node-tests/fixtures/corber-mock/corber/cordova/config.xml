@@ -8,7 +8,6 @@
     Apache Cordova Team
   </author>
     <content src="index.html"/>
-    <plugin name="cordova-plugin-whitelist" spec="1"/>
     <plugin name="cordova-test-plugin" spec="1"/>
     <access origin="*"/>
     <allow-navigation href="*"/>
